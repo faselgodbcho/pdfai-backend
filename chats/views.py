@@ -103,13 +103,6 @@ class ChatAPIView(APIView):
                 max_tokens=500
             )
             ai_response = response.json()
-            print(ai_response)
-
-            parsed_message = json.loads(ai_response)
-
-            # text = parsed_message["message"]["content"]
-
-            print(parsed_message.get("content"))
         except Exception as e:
             return Response({"error": f"AI chat error: {str(e)}"}, status=500)
 
