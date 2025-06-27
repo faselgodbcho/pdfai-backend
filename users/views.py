@@ -1,0 +1,80 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from decouple import config
+from .models import User
+
+
+from .serializers import UserSerializer, RegisterSerializer
+
+
+class UserDetailView(APIView):
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
+user_detail_view = UserDetailView.as_view()
+
+
+class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @staticmethod
+    def get_tokens_for_user(user):
+        refresh = RefreshToken.for_user(user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
+    def post(self, request):
+        email = request.data.get("email")
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {"detail": "User already registered with this email."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        tokens = self.get_tokens_for_user(user)
+
+        response = Response(
+            {
+                "message": "User registered successfully.",
+                "access": tokens['access'],
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+        DEBUG = config("DEBUG", default=False, cast=bool)
+
+        response.set_cookie(
+            key='refresh_token',
+            value=tokens['refresh'],
+            httponly=True,
+            secure=not DEBUG,
+            samesite='Lax',
+            max_age=7*24*60*60,   # 7 days
+        )
+
+        return response
+
+
+register_user_view = RegisterAPIView.as_view()
+
+
+class LogoutAPIView(APIView):
+    def post(self, request):
+        response = Response(
+            {"message": "Logged out successfully."}, status=status.HTTP_200_OK)
+        response.delete_cookie('refresh_token')
+        return response
+
+
+logout_user_view = LogoutAPIView.as_view()
