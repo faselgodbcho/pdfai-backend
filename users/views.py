@@ -2,9 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
+
 from decouple import config
 from .models import User
+from .utils import get_tokens_for_user
 
 
 from .serializers import UserSerializer, RegisterSerializer
@@ -23,14 +24,6 @@ user_detail_view = UserDetailView.as_view()
 class RegisterAPIView(APIView):
     permission_classes = [AllowAny]
 
-    @staticmethod
-    def get_tokens_for_user(user):
-        refresh = RefreshToken.for_user(user)
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }
-
     def post(self, request):
         email = request.data.get("email")
         if User.objects.filter(email=email).exists():
@@ -42,7 +35,9 @@ class RegisterAPIView(APIView):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        tokens = self.get_tokens_for_user(user)
+        stay_logged_in = request.data.get("stay_logged_in", False)
+        stay_logged_in = str(stay_logged_in).lower() == "true"
+        tokens = get_tokens_for_user(user, stay_logged_in)
 
         response = Response(
             {
@@ -60,7 +55,7 @@ class RegisterAPIView(APIView):
             httponly=True,
             secure=not DEBUG,
             samesite='Lax',
-            max_age=7*24*60*60,   # 7 days
+            max_age=7 * 24 * 60 * 60 if stay_logged_in else 60 * 60,
         )
 
         return response

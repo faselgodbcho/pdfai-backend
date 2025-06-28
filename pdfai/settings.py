@@ -152,8 +152,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(hours=1) if DEBUG else datetime.timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(hours=2) if DEBUG else datetime.timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME":  datetime.timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME":  datetime.timedelta(days=7),
 }
 
 

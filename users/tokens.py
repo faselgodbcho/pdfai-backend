@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from decouple import config
 
+from .utils import get_tokens_for_user
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
 
@@ -14,11 +16,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         except Exception as e:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        refresh = serializer.validated_data['refresh']
-        access = serializer.validated_data['access']
+        user = serializer.user
+        stay_logged_in = request.data.get("stay_logged_in", False)
+        stay_logged_in = str(stay_logged_in).lower() == "true"
+
+        tokens = get_tokens_for_user(user, stay_logged_in)
 
         response_data = {
-            'access': access,
+            'access': tokens.get("access", ""),
         }
 
         response = Response(response_data, status=status.HTTP_200_OK)
@@ -27,11 +32,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         response.set_cookie(
             key='refresh_token',
-            value=refresh,
+            value=tokens.get("refresh", ""),
             httponly=True,
             secure=not DEBUG,
             samesite='Lax',
-            max_age=7*24*60*60,   # 7 days
+            max_age=7 * 24 * 60 * 60 if stay_logged_in else 60 * 60,
         )
 
         return response
