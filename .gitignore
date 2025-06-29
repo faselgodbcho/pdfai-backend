@@ -5,6 +5,14 @@
 .AppleDouble
 .LSOverride
 
+# Local HTTPS certificates
+cert/
+cert.pem
+key.pem
+localhost+*.pem
+*.key
+*.crt
+
 # Icon must end with two \r
 Icon
 
