@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-from decouple import config
+# from decouple import config
 from .models import User
 from .utils import get_tokens_for_user
 
@@ -47,14 +48,14 @@ class RegisterAPIView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-        DEBUG = config("DEBUG", default=False, cast=bool)
+        # DEBUG = config("DEBUG", default=False, cast=bool)
 
         response.set_cookie(
             key='refresh_token',
             value=tokens['refresh'],
             httponly=True,
-            secure=not DEBUG,
-            samesite='Lax',
+            secure=True,
+            samesite='None',
             max_age=7 * 24 * 60 * 60 if stay_logged_in else 60 * 60,
         )
 
@@ -65,11 +66,34 @@ register_user_view = RegisterAPIView.as_view()
 
 
 class LogoutAPIView(APIView):
+
     def post(self, request):
-        response = Response(
-            {"message": "Logged out successfully."}, status=status.HTTP_200_OK)
-        response.delete_cookie('refresh_token')
-        return response
+        try:
+            refresh_token = request.COOKIES.get("refresh_token")
+
+            # if refresh_token:
+            #     token = RefreshToken(refresh_token)
+            #     token.blacklist()
+
+            response = Response(
+                {"message": "Logout successful."},
+                status=status.HTTP_200_OK
+            )
+
+            response.delete_cookie(
+                key='refresh_token',
+            )
+            return response
+        except KeyError:
+            return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
+        except TokenError:
+            return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(str(e))
+            return Response(
+                {"error": f"Logout failed: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 logout_user_view = LogoutAPIView.as_view()

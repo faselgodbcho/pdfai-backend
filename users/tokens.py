@@ -28,14 +28,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         response = Response(response_data, status=status.HTTP_200_OK)
 
-        DEBUG = config("DEBUG", default=False, cast=bool)
+        # DEBUG = config("DEBUG", default=False, cast=bool)
 
         response.set_cookie(
             key='refresh_token',
             value=tokens.get("refresh", ""),
             httponly=True,
-            secure=not DEBUG,
-            samesite='Lax',
+            secure=True,
+            samesite='None',
             max_age=7 * 24 * 60 * 60 if stay_logged_in else 60 * 60,
         )
 
