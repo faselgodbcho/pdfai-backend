@@ -1,5 +1,20 @@
+import os
 import fitz  # PyMuPDF
 from pdfai.client import co
+
+
+def extract_pdf_title_or_heading(file_path: str) -> str:
+    doc = fitz.open(file_path)
+
+    title = doc.metadata.get("title")
+    if title:
+        return title.strip()
+
+    file_name = os.path.basename(file_path)
+    name_without_ext = os.path.splitext(file_name)[0]
+    clean_name = name_without_ext.replace("_", " ").strip()
+
+    return clean_name or "Untitled PDF"
 
 
 def chunk_text(text, max_words=200):

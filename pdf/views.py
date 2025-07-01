@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .serializers import PDFDocumentSerializer
-from .utils import extract_text_from_pdf
+from .utils import extract_text_from_pdf, extract_pdf_title_or_heading
 from chats.models import ChatSession
 from .utils import embed_chunks, chunk_text
 from .models import PDFChunk
@@ -30,6 +30,13 @@ class PDFUploadView(APIView):
 
         serializer.is_valid(raise_exception=True)
         pdf_instance = serializer.save(user=request.user)
+
+        try:
+            title = extract_pdf_title_or_heading(pdf_instance.file.path)
+            pdf_instance.title = title
+            pdf_instance.save(update_fields=["title"])
+        except Exception as e:
+            print("Title extraction failed:", e)
 
         try:
             extracted_content = extract_text_from_pdf(pdf_instance.file.path)

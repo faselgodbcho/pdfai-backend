@@ -6,6 +6,7 @@ from users.serializers import UserSerializer
 
 class PDFDocumentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    title = serializers.CharField(read_only=True)
 
     class Meta:
         model = PDFDocument
