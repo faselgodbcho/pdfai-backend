@@ -118,3 +118,13 @@ class ChatAPIView(APIView):
 
 
 chat_api_view = ChatAPIView.as_view()
+
+
+class DeleteChatSessionAPIview(generics.DestroyAPIView):
+    serializer_class = ChatSessionSerializer
+
+    def get_queryset(self):
+        return ChatSession.objects.filter(user=self.request.user)
+
+
+delete_session_api_view = DeleteChatSessionAPIview.as_view()

@@ -56,10 +56,10 @@ class PDFUploadView(APIView):
                 embedding=embedding
             ))
 
-        PDFChunk.objects.bulk_create(chunk_objects, batch_size=100)
-
         session = ChatSession.objects.create(
             user=request.user, pdf=pdf_instance)
+
+        PDFChunk.objects.bulk_create(chunk_objects, batch_size=100)
 
         response_data = serializer.data
         response_data["session_id"] = str(session.id)

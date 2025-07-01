@@ -16,6 +16,10 @@ class ChatSession(models.Model):
     def __str__(self):
         return f"ChatSession {self.id} for {self.user} - PDF: {self.pdf.title}"
 
+    def delete(self, *args, **kwargs):
+        self.pdf.delete()
+        super().delete(*args, **kwargs)
+
 
 class Message(models.Model):
     session = models.ForeignKey(
