@@ -4,9 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .serializers import PDFDocumentSerializer
-from .utils import extract_text_from_pdf, extract_pdf_title_or_heading
 from chats.models import ChatSession
-from .utils import embed_chunks, chunk_text
+from .utils import embed_chunks, chunk_text, generate_unique_title, extract_text_from_pdf, extract_pdf_title_or_heading
 from .models import PDFChunk
 
 
@@ -25,16 +24,19 @@ class PDFUploadView(APIView):
         if file_size_mb > MAX_FILE_SIZE_MB:
             return Response({"error": f"File too large. Maximum allowed size is {MAX_FILE_SIZE_MB}MB."}, status=400)
 
-        if not uploaded_file.name.endswith('.pdf'):
+        if not uploaded_file.name.lower().endswith('.pdf'):
             return Response({"error": "Only PDF files are allowed."}, status=400)
 
         serializer.is_valid(raise_exception=True)
         pdf_instance = serializer.save(user=request.user)
 
         try:
-            title = extract_pdf_title_or_heading(pdf_instance.file.path)
-            pdf_instance.title = title
+            raw_title = extract_pdf_title_or_heading(
+                pdf_instance.file.path, uploaded_file.name)
+            unique_title = generate_unique_title(request.user, raw_title)
+            pdf_instance.title = unique_title
             pdf_instance.save(update_fields=["title"])
+
         except Exception as e:
             print("Title extraction failed:", e)
 

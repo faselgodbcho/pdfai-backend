@@ -71,9 +71,9 @@ class LogoutAPIView(APIView):
         try:
             refresh_token = request.COOKIES.get("refresh_token")
 
-            # if refresh_token:
-            #     token = RefreshToken(refresh_token)
-            #     token.blacklist()
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
 
             response = Response(
                 {"message": "Logout successful."},
