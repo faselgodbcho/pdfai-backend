@@ -31,3 +31,6 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.sender} @ {self.timestamp}: {self.content[:50]}"
+
+    class Meta:
+        ordering = ['timestamp']

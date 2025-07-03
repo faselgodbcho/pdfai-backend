@@ -9,13 +9,13 @@ from rest_framework import status
 
 from pdf.models import PDFChunk
 from .models import ChatSession, Message
-from .serializers import ChatSessionSerializer, MessageSerializer
+from .serializers import ChatSessionListSerializer, MessageSerializer
 from pdfai.client import co
 from .utils import embed_query, cosine_sim
 
 
 class ChatSessionListAPIView(generics.ListAPIView):
-    serializer_class = ChatSessionSerializer
+    serializer_class = ChatSessionListSerializer
 
     def get_queryset(self):
         return ChatSession.objects.filter(user=self.request.user).order_by('-created_at')
@@ -110,21 +110,33 @@ class ChatAPIView(APIView):
             session=session, sender="ai", content=ai_response)
 
         return Response({
-            "messages": [
-                MessageSerializer(user_msg).data,
+            "message": 
                 MessageSerializer(ai_msg).data
-            ]
+            
         }, status=201)
 
 
 chat_api_view = ChatAPIView.as_view()
 
 
-class DeleteChatSessionAPIview(generics.DestroyAPIView):
-    serializer_class = ChatSessionSerializer
+class DeleteChatSessionAPIView(generics.DestroyAPIView):
+    serializer_class = ChatSessionListSerializer
 
     def get_queryset(self):
         return ChatSession.objects.filter(user=self.request.user)
 
 
-delete_session_api_view = DeleteChatSessionAPIview.as_view()
+delete_session_view = DeleteChatSessionAPIView.as_view()
+
+
+class MessageListAPIView(generics.ListAPIView):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        session_id = self.kwargs.get("session_id")
+        session = get_object_or_404(
+            ChatSession, id=session_id, user=self.request.user)
+        return session.messages.all()
+
+
+message_list_view = MessageListAPIView.as_view()
