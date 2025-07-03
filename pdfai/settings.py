@@ -28,7 +28,7 @@ SECRET_KEY = config("SECRET_KEY", cast=str, default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=[])
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="")
 
 # Application definition
 
@@ -167,9 +167,6 @@ CORS_ALLOWED_ORIGINS = [
 if DEBUG:
     CORS_ALLOWED_ORIGINS += ["http://localhost:3000",
                              "https://localhost:3000",
-                             "http://localhost:5500",
-                             "http://127.0.0.1:5500",
-                             "https://127.0.0.1:3000",
                              ]
 
 CORS_ALLOW_CREDENTIALS = True
