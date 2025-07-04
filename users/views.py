@@ -54,7 +54,7 @@ class RegisterAPIView(APIView):
             secure=True,
             samesite='None',
             max_age=7 * 24 * 60 * 60 if stay_logged_in else 60 * 60,
-            domain='pdfai-frontend-sqks.vercel.app',
+            # domain='pdfai-frontend-sqks.vercel.app',
         )
 
         return response
