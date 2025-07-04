@@ -4,7 +4,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-# from decouple import config
 from .models import User
 from .utils import get_tokens_for_user
 
@@ -47,8 +46,6 @@ class RegisterAPIView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
-
-        # DEBUG = config("DEBUG", default=False, cast=bool)
 
         response.set_cookie(
             key='refresh_token',

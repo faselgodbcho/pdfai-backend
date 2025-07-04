@@ -1,7 +1,6 @@
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.response import Response
 from rest_framework import status
-from decouple import config
 
 from .utils import get_tokens_for_user
 
@@ -27,8 +26,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         }
 
         response = Response(response_data, status=status.HTTP_200_OK)
-
-        # DEBUG = config("DEBUG", default=False, cast=bool)
 
         response.set_cookie(
             key='refresh_token',
