@@ -11,5 +11,9 @@ class UsersConfig(AppConfig):
         User = get_user_model()
         if not User.objects.filter(is_superuser=True).exists():
             User.objects.create_superuser(
-                'fasel', 'fasel@gmail.com', 'i_love_dogs')
+                email='fasel@gmail.com',
+                password='i_love_dogs',
+                username='fasel'
+            )
+
             logging.info("Superuser created automatically")
