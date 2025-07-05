@@ -30,7 +30,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+ALLOWED_HOSTS = [] if DEBUG else env.list('ALLOWED_HOSTS', default=[])
 
 # Application definition
 
@@ -92,7 +92,10 @@ WSGI_APPLICATION = 'pdfai.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db(
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    } if DEBUG else env.db(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
     )
 }
@@ -171,9 +174,11 @@ CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-if DEBUG and not CORS_ALLOWED_ORIGINS:
+if DEBUG:
     CORS_ALLOWED_ORIGINS += ["http://localhost:3000",
                              "https://localhost:3000",
                              ]
+
+    CSRF_TRUSTED_ORIGINS += ['http://localhost:8000']
 
 CORS_ALLOW_CREDENTIALS = True
