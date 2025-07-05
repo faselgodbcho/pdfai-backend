@@ -64,6 +64,7 @@ register_user_view = RegisterAPIView.as_view()
 
 
 class LogoutAPIView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         try:
@@ -72,6 +73,11 @@ class LogoutAPIView(APIView):
             if refresh_token:
                 token = RefreshToken(refresh_token)
                 token.blacklist()
+            else:
+                return Response(
+                    {"message": "Logout successful."},
+                    status=status.HTTP_200_OK
+                )
 
             response = Response(
                 {"message": "Logout successful."},

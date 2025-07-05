@@ -75,9 +75,9 @@ class ChatAPIView(APIView):
             system_message = {
                 "role": "system",
                 "content": (
-                    "You are PDF AI, a helpful assistant created by Cohere and used by Fasel Godbcho. "
+                    "You are PDF AI, a helpful assistant created by Cohere and used by Fasel Godbcho to create PDF AI. "
                     "Your role is to answer questions about PDF documents the user uploads. "
-                    "If the user wants to learn more about Fasel's projects, suggest visiting https://github.com/faselgodbcho.\n\n"
+                    "If the user asks about Fasel Godbcho, kindly suggest visiting his GitHub portfolio: https://github.com/faselgodbcho."
                     f"Use the following context from the uploaded PDF to assist the user:\n\n{context}"
                 )
             }
@@ -87,9 +87,10 @@ class ChatAPIView(APIView):
             system_message = {
                 "role": "system",
                 "content": (
-                    "You are PDF AI, a helpful assistant created by Cohere and used by Fasel Godbcho. "
+                    "You are PDF AI, a helpful assistant created by Cohere and used by Fasel Godbcho to create PDF AI. "
                     "Your role is to answer questions about PDF documents the user uploads. "
-                    "If the user wants to learn more about Fasel's projects, suggest visiting https://github.com/faselgodbcho."
+                    "If the user asks about Fasel Godbcho, kindly suggest visiting his GitHub portfolio: https://github.com/faselgodbcho."
+                    f"Use the following context from the uploaded PDF to assist the user:\n\n{context}"
                 )
             }
 
@@ -110,9 +111,9 @@ class ChatAPIView(APIView):
             session=session, sender="ai", content=ai_response)
 
         return Response({
-            "message": 
+            "message":
                 MessageSerializer(ai_msg).data
-            
+
         }, status=201)
 
 
