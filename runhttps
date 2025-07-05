@@ -1,2 +1,9 @@
 #!/bin/bash
-python manage.py runsslserver --certificate ../certs/cert.pem --key ../certs/key.pem
+mkdir -p ./certs
+
+if [ ! -f ./certs/cert.pem ] || [ ! -f ./certs/key.pem ]; then
+    echo "Generating certificates using mkcert..."
+    mkcert -cert-file ./certs/cert.pem -key-file ./certs/key.pem localhost 127.0.0.1 ::1
+fi
+
+python manage.py runsslserver --certificate ./certs/cert.pem --key ./certs/key.pem
