@@ -61,4 +61,4 @@ chmod +x runhttps
 - mkcert (for local HTTPS)
 
 ## Author
-Made with ❤️ by @faselgodbcho
+Made with ❤️ by [@faselgodbcho](https://github.com/faselgodbcho/)
