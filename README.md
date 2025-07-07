@@ -60,5 +60,12 @@ chmod +x runhttps
 - Django REST Framework (DRF)
 - mkcert (for local HTTPS)
 
+## Resources
+Helpful documentation and tools used during development:
+- [Django](https://docs.djangoproject.com/en/5.2/) — Official Django documentation
+- [Django REST Framework](https://django-rest-framework.com/) — Toolkit for building Web APIs
+- [Cohere Docs](https://docs.cohere.com/v2/docs/) — Embedding and command R+ API references
+- [mkcert](https://github.com/FiloSottile/mkcert) — Generate trusted local SSL certificates
+
 ## Author
 Made with ❤️ by [@faselgodbcho](https://github.com/faselgodbcho/)
