@@ -1,3 +1,5 @@
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -77,3 +79,22 @@ class PDFUploadView(APIView):
 
 
 upload_pdf_view = PDFUploadView.as_view()
+
+
+class PDFExportView(APIView):
+    def get(self, request, session_id, *args, **kwargs):
+
+        session = get_object_or_404(
+            ChatSession, id=session_id, user=request.user)
+        pdf = session.pdf
+
+        filename = f"{pdf.title}.pdf" if pdf.title else "exported.pdf"
+        filename = filename.replace('"', '').replace("'", "")
+
+        response = FileResponse(pdf.file.open(
+            'rb'), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{pdf.title}.pdf"'
+        return response
+
+
+export_pdf_view = PDFExportView.as_view()

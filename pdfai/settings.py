@@ -181,4 +181,8 @@ if DEBUG:
 
     CSRF_TRUSTED_ORIGINS += ['http://localhost:8000']
 
+CORS_EXPOSE_HEADERS = [
+    "Content-Disposition",
+]
+
 CORS_ALLOW_CREDENTIALS = True
