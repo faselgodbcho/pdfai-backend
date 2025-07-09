@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password as validate_user_password
 
-from .models import User
+from .models import User, UserSettings
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,3 +41,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+
+class UserSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = ['response_length', 'tone', 'context_memory']

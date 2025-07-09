@@ -33,3 +33,18 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="settings")
+    response_length = models.CharField(max_length=10, choices=[
+        ("short", "Short"), ("medium", "Medium"), ("long", "Long")
+    ], default="medium")
+    tone = models.CharField(max_length=10, choices=[
+        ("formal", "Formal"), ("casual", "Casual"), ("neutral", "Neutral")
+    ], default="neutral")
+    context_memory = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s({self.user.email}) settings"
